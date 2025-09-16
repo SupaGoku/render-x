@@ -30,7 +30,7 @@ const createJsBundle = (input, fileBase) => ({
   ],
   plugins: [
     esbuild({
-      include: /\.ts$/,
+      include: /\.[jt]s$/,
       exclude: /node_modules/,
       target: 'es2017',
       sourceMap: true,
@@ -38,7 +38,7 @@ const createJsBundle = (input, fileBase) => ({
     }),
     commonjs(),
     nodeResolve({
-      extensions: ['.ts'],
+      extensions: ['.ts', '.tsx', '.js'],
     }),
   ],
 })
@@ -52,4 +52,14 @@ const createDtsBundle = (input, fileBase) => ({
   plugins: [dts()],
 })
 
-export default defineConfig([createJsBundle('src/index.ts', 'index'), createDtsBundle('src/index.ts', 'index')])
+const jsBundles = [
+  createJsBundle('src/index.ts', 'index'),
+  createJsBundle('src/jsx-runtime.ts', 'jsx-runtime'),
+]
+
+const dtsBundles = [
+  createDtsBundle('src/index.ts', 'index'),
+  createDtsBundle('src/jsx-runtime.ts', 'jsx-runtime'),
+]
+
+export default defineConfig([...jsBundles, ...dtsBundles])

@@ -1,10 +1,11 @@
 export type VNodeType = string | ((props: any) => VNode)
+import type { Properties as CssProperties } from 'csstype'
 
 export interface VNodeProps {
   [key: string]: any
   id?: string
   className?: string
-  style?: string | Partial<CSSStyleDeclaration>
+  style?: string | Partial<CssProperties>
   'data-key'?: string | number
   'data-index'?: number
   'data-size-id'?: number
@@ -24,7 +25,11 @@ export interface VNode {
   id?: string
 }
 
-export type VNodeChild = VNode | string | number | null | undefined
+export interface Ref<T> {
+  current: T | null
+}
+
+export type VNodeChild = VNode | string | number | boolean | null | undefined
 
 export interface RenderFunction {
   (root: Element, vnode: VNodeChild): void
@@ -32,19 +37,29 @@ export interface RenderFunction {
 
 export type DelegatedEventType = 'click' | 'input' | 'submit' | 'keydown' | 'keyup' | 'focus' | 'blur'
 
+export interface DomAttributes {
+  [key: string]: any
+  style?: string | Partial<CssProperties>
+}
+
 export interface EventContext {
   type: DelegatedEventType
   handler: (event: Event) => void
+
   element: Element
 }
-
-export type FunctionalComponent<P = {}> = (props: P & { children?: VNodeChild }) => VNode
 
 export interface BaseComponentProps {
   key?: string | number
   id?: string
   children?: VNodeChild | VNodeChild[]
 }
+
+interface FunctionalComponentProps extends BaseComponentProps {
+  className?: string
+}
+
+export type FunctionalComponent<P = {}> = (props: P & DomAttributes & FunctionalComponentProps) => VNode
 
 declare global {
   namespace JSX {

@@ -1,11 +1,13 @@
 import { setCssVariable, setCssVariables } from './css-variables'
 import { Fragment, jsx, jsxs } from './jsx-runtime'
-import { Portal } from './portal'
+import { createPortal, Portal } from './portal'
+import { render } from './render'
 import { useEffect, useRef, useState, type HookContext, type HookData } from './system-hooks'
 import {
   type DelegatedEventType,
   type EventContext,
   type FunctionalComponent,
+  type Ref,
   type RenderFunction,
   type VNode,
   type VNodeChild,
@@ -14,12 +16,14 @@ import {
 } from './types'
 
 export {
+  createPortal,
   Fragment,
   jsx,
   jsxs,
   Portal,
-  setCssVariable as setCSSVariable,
-  setCssVariables as setCSSVariables,
+  render,
+  setCssVariable,
+  setCssVariables,
   useEffect,
   useRef,
   useState,
@@ -31,6 +35,7 @@ export type {
   FunctionalComponent,
   HookContext,
   HookData,
+  Ref,
   RenderFunction,
   VNode,
   VNodeChild,

@@ -5,6 +5,7 @@ import {
   type HookContext,
   type HookData,
 } from './system-hooks'
+import { updateElementProps } from './dom-props'
 import type { VNode } from './types'
 
 interface HookHostState {
@@ -146,33 +147,6 @@ const updateElement = (element: Element, vnode: any): void => {
 
     if (vnode.children) {
       updateElementChildren(element, vnode.children)
-    }
-  }
-}
-
-const updateElementProps = (element: Element, props: any): void => {
-  for (const [key, value] of Object.entries(props)) {
-    if (key.startsWith('on') && typeof value === 'function') {
-      continue
-    } else if (key === 'className') {
-      const className = String(value || '')
-      if (element.className !== className) {
-        element.className = className
-      }
-    } else if (key === 'style') {
-      if (typeof value === 'string') {
-        ;(element as HTMLElement).style.cssText = value
-      } else if (value && typeof value === 'object') {
-        Object.assign((element as HTMLElement).style, value)
-      }
-    } else if (key.startsWith('data-') || key === 'id') {
-      if (element.getAttribute(key) !== String(value)) {
-        element.setAttribute(key, String(value))
-      }
-    } else {
-      if ((element as any)[key] !== value) {
-        ;(element as any)[key] = value
-      }
     }
   }
 }

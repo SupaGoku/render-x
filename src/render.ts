@@ -1,7 +1,8 @@
+import type { VNode, VNodeChild } from './types'
 import { isVNode } from './vdom'
-import type { VNode, VNodeChild, VNodeProps } from './types'
 
-import { cleanupEvents, registerEventHandler, setupEventDelegation } from './event-manager'
+import { applyElementProps } from './dom-props'
+import { cleanupEvents, setupEventDelegation } from './event-manager'
 import { cleanupHostInstance } from './hook-host'
 
 export const render = (root: Element, vnode: VNodeChild): void => {
@@ -10,7 +11,7 @@ export const render = (root: Element, vnode: VNodeChild): void => {
 
   const element = createElementFromVNode(vnode)
 
-  if (!element) throw new Error('Render element is required')
+  if (!element) return null
 
   root.appendChild(element)
   setupEventDelegation(root)
@@ -24,6 +25,7 @@ const createElementFromVNode = (vnode: VNodeChild): Element | Text | DocumentFra
   if (!isVNode(vnode)) return null
 
   if (vnode.type === 'fragment') return createFragment(vnode)
+
   if (typeof vnode.type === 'function') return createFunctionElement(vnode)
 
   return createElement(vnode)
@@ -55,41 +57,13 @@ const createFunctionElement = (vnode: VNode): Element | Text | DocumentFragment 
 const createElement = (vnode: VNode): Element => {
   const element = document.createElement(vnode.type as string)
 
-  if (vnode.props) setElementProps(element, vnode.props)
+  if (vnode.props) applyElementProps(element, vnode.props)
   for (const child of vnode.children) {
     const childElement = createElementFromVNode(child)
     if (childElement) element.appendChild(childElement)
   }
 
   return element
-}
-
-const setElementProps = (element: Element, props: VNodeProps): void => {
-  const entries = Object.entries(props ?? {}) as [string, unknown][]
-
-  for (const [key, value] of entries) {
-    if (value == null) continue
-
-    if (key.startsWith('on') && typeof value === 'function') {
-      registerEventHandler(element, key, value as (event: Event) => void)
-    } else if (key === 'className') {
-      element.className = String(value ?? '')
-    } else if (key === 'style') {
-      setElementStyle(element as HTMLElement, value)
-    } else if (key.startsWith('data-') || key === 'id') {
-      element.setAttribute(key, String(value))
-    } else {
-      ;(element as unknown as Record<string, unknown>)[key] = value
-    }
-  }
-}
-
-const setElementStyle = (element: HTMLElement, style: unknown): void => {
-  if (typeof style === 'string') {
-    element.style.cssText = style
-  } else if (style && typeof style === 'object') {
-    Object.assign(element.style, style as Partial<CSSStyleDeclaration>)
-  }
 }
 
 const cleanupElement = (element: Element): void => {

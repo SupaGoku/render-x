@@ -8,6 +8,7 @@
 
 - [ ] Core fiberless reconciler - Implement diffing algorithm with keyed child support `L`
 - [ ] Hook scheduler parity - Provide `useState`, `useEffect`, `useMemo`, and `useRef` semantics `M`
+- [ ] Signals-based state propagation - Introduce fine-grained signal primitives for partial rerenders `M`
 - [ ] TypeScript declaration suite - Generate `.d.ts` coverage for public APIs `S`
 - [ ] Rollup build pipeline - Produce ESM, CJS, and type bundles with size budgets enforced `M`
 - [ ] Playground harness - Create Vite-based sandbox for manual QA and docs snippets `S`
