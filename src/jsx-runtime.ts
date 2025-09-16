@@ -1,5 +1,5 @@
 import { Fragment } from './fragment'
-import { HookHost } from './hook-host'
+import { withHooks } from './hooks/internal'
 import { VNode, VNodeChild, VNodeProps } from './types'
 import { h } from './vdom'
 
@@ -26,7 +26,7 @@ const renderComponent: ComponentRenderer = (
     nextProps.children = children
   }
 
-  const vnode = HookHost(component, nextProps)
+  const vnode = withHooks(component, nextProps)
 
   if (key !== undefined && vnode && typeof vnode === 'object') {
     vnode.key = key

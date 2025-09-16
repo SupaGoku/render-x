@@ -1,5 +1,6 @@
-import { getHookContext } from './context'
-import { areDepsEqual } from './deps'
+import { getHookContext } from './internal/context'
+import { areDepsEqual } from './internal/deps'
+import { isEffectHook } from './internal/effect-utils'
 import type { EffectHook, HookData } from '../types'
 
 export const useEffect = (
@@ -39,8 +40,4 @@ export const useEffect = (
   } else {
     existingHook.effect = effect
   }
-}
-
-export const isEffectHook = (hook: HookData | undefined): hook is EffectHook => {
-  return Boolean(hook && hook.type === 'effect')
 }

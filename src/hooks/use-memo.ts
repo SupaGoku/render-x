@@ -1,5 +1,5 @@
-import { getHookContext } from './context'
-import { areDepsEqual } from './deps'
+import { getHookContext } from './internal/context'
+import { areDepsEqual } from './internal/deps'
 import type { MemoHook } from '../types'
 
 export const useMemo = <T>(factory: () => T, deps?: readonly any[]): T => {

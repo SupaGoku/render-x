@@ -11,7 +11,19 @@ export { createPortal, Portal } from './portal'
 export { render } from './render'
 
 // Hooks
-export { useCallback, useEffect, useMemo, useRef, useState, type HookContext, type HookData } from './hooks'
+export {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type HookContext,
+  type HookData,
+} from './hooks'
+
+// Context API
+export { createContext, type RenderXContext, type ContextProviderProps } from './context'
 
 // Types
 export {

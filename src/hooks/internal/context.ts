@@ -1,4 +1,4 @@
-import type { HookContext } from '../types'
+import type { HookContext } from '../../types'
 
 let currentContext: HookContext | null = null
 
@@ -12,3 +12,4 @@ export const getHookContext = (): HookContext => {
   }
   return currentContext
 }
+

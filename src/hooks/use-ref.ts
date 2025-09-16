@@ -1,4 +1,4 @@
-import { getHookContext } from './context'
+import { getHookContext } from './internal/context'
 import type { RefHook } from '../types'
 
 export const useRef = <T>(initialValue: T): { current: T } => {

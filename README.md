@@ -28,6 +28,7 @@ Render-X Core delivers the essentials for building interactive interfaces withou
 - **Delegated DOM events** &mdash; event listeners register once per root, reducing memory churn while preserving synthetic-style bubbling (`src/event-manager.ts`).
 - **Portals & fragments out of the box** &mdash; Render anywhere in the DOM tree and compose children lists without wrappers (`src/portal.ts`, `src/fragment.ts`).
 - **TypeScript-first design** &mdash; strict typings for JSX factories (`jsx`, `jsxs`) and runtime exports ensure great editor support.
+- **Context API** &mdash; `createContext`, `<Provider>`, and `useContext` mirror React-style ergonomics for shared state.
 
 ---
 
@@ -86,6 +87,7 @@ Run your bundler (Vite, esbuild, Webpack, etc.) as normal. Render-X emits standa
 - `useRef(initial)`: mutable containers preserved between renders.
 - `useMemo(factory, deps?)`: memoize expensive computations aligned to dependency arrays.
 - `useCallback(callback, deps?)`: memoized function references, built atop `useMemo`.
+- `useContext(ctx)`: read a context value created by `createContext`, honoring nested providers and fallbacks.
 
 Hook execution is coordinated through an internal `HookContext` stored per component instance, mirroring the React mental model. Updates schedule via a microtask queue to batch rerenders.
 
@@ -105,15 +107,40 @@ Use standard DOM props: `className`, `style`, `data-*`, handlers like `onClick`.
 
 Supported delegated events: `click`, `input`, `submit`, `keydown`, `focus`, `blur`. Handlers are automatically registered the first time an element with `on<Event>` props renders.
 
+### Context
+
+```tsx
+import { createContext, jsx, render, useContext, useState } from '@render-x/core'
+
+const CounterContext = createContext(0)
+
+const CounterDisplay = () => {
+  const count = useContext(CounterContext)
+  return <p>Count: {count}</p>
+}
+
+const CounterProvider = () => {
+  const [count, setCount] = useState(0)
+  return (
+    <CounterContext.Provider value={count}>
+      <button onClick={() => setCount((n) => n + 1)}>Increment</button>
+      <CounterDisplay />
+    </CounterContext.Provider>
+  )
+}
+
+render(document.getElementById('root')!, <CounterProvider />)
+```
+
 ## Core Concepts
 
 ### Fiberless Rendering Pipeline
 
-`render.ts` translates VNodes into DOM nodes using a straightforward depth-first strategy. Diffing on updates happens inside `hook-host.ts`, where component instances reuse their hook arrays on subsequent renders.
+`render.ts` translates VNodes into DOM nodes using a straightforward depth-first strategy. Diffing on updates happens inside the hook runtime (`src/hooks/internal/with-hooks.ts`), where component instances reuse their hook arrays on subsequent renders.
 
 ### Hook Host
 
-`HookHost` wraps functional components to:
+`withHooks` wraps functional components to:
 
 1. Maintain hook state arrays.
 2. Schedule microtask flushes after state updates.
@@ -135,6 +162,7 @@ Supported delegated events: `click`, `input`, `submit`, `keydown`, `focus`, `blu
 | `render(root: Element, vnode: VNodeChild)` | Mounts a VNode tree into a DOM container, cleaning previous content. |
 | `jsx`, `jsxs`, `Fragment` | JSX factory functions used by the compiler (do not call directly). |
 | `useState`, `useEffect`, `useRef`, `useMemo`, `useCallback` | React-compatible hook implementations. |
+| `useContext`, `createContext`, `<Provider>` | Basic context API for propagating shared state. |
 | `createPortal(children, target)` / `Portal` | Render subtree into another DOM node. |
 | `setCssVariable`, `setCssVariables` | Utilities from `css-variables.ts` for theming via CSS custom properties. |
 | `HookContext`, `HookData`, `VNode*` types | Public TypeScript types for authoring bindings. |

@@ -1,4 +1,4 @@
-import { getHookContext } from './context'
+import { getHookContext } from './internal/context'
 import type { StateHook } from '../types'
 
 export const useState = <T>(
