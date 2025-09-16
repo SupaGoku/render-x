@@ -1,10 +1,4 @@
-import {
-  cleanupEffects,
-  runEffects,
-  setHookContext,
-  type HookContext,
-  type HookData,
-} from './system-hooks'
+import { isEffectHook, setHookContext, type HookContext, type HookData } from './hooks'
 import { updateElementProps } from './dom-props'
 import type { VNode } from './types'
 
@@ -27,6 +21,26 @@ interface HookHostInstance {
 const instanceMap = new WeakMap<Element, HookHostInstance>()
 const updateQueue = new Set<HookHostInstance>()
 let isFlushScheduled = false
+
+const runEffects = (context: HookContext): void => {
+  for (const hook of context.hooks) {
+    if (isEffectHook(hook) && !hook.cleanup) {
+      const cleanup = hook.effect()
+      if (typeof cleanup === 'function') {
+        hook.cleanup = cleanup
+      }
+    }
+  }
+}
+
+const cleanupEffects = (context: HookContext): void => {
+  for (const hook of context.hooks) {
+    if (isEffectHook(hook) && hook.cleanup) {
+      hook.cleanup()
+      hook.cleanup = undefined
+    }
+  }
+}
 
 export const HookHost = (component: (props: any) => VNode, props: any): VNode => {
   const instance: HookHostInstance = {

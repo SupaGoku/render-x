@@ -61,6 +61,39 @@ interface FunctionalComponentProps extends BaseComponentProps {
 
 export type FunctionalComponent<P = {}> = (props: P & DomAttributes & FunctionalComponentProps) => VNode
 
+export interface StateHook<T = any> {
+  type: 'state'
+  value: T
+  setter: (value: T | ((prev: T) => T)) => void
+}
+
+export interface EffectHook {
+  type: 'effect'
+  effect: () => void | (() => void)
+  deps?: readonly any[]
+  cleanup?: () => void
+}
+
+export interface RefHook<T = any> {
+  type: 'ref'
+  current: T
+}
+
+export interface MemoHook<T = any> {
+  type: 'memo'
+  value: T
+  deps?: readonly any[]
+}
+
+export type HookData = StateHook | EffectHook | RefHook | MemoHook
+
+export interface HookContext {
+  index: number
+  hooks: HookData[]
+  component: any
+  scheduleUpdate: () => void
+}
+
 declare global {
   namespace JSX {
     interface Element extends VNode {}

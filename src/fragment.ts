@@ -1,7 +1,7 @@
 import { VNode, VNodeChild } from './types'
 
 export interface FragmentProps {
-  children: VNodeChild | VNodeChild[]
+  children?: VNodeChild | VNodeChild[]
 }
 
 export const Fragment = ({ children }: FragmentProps): VNode => {

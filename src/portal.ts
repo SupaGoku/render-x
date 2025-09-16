@@ -1,5 +1,5 @@
 import { jsx } from './jsx-runtime'
-import { useEffect } from './system-hooks'
+import { useEffect } from './hooks'
 import type { VNode, VNodeChild } from './types'
 
 import { render } from './render'
