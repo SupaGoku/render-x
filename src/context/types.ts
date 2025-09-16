@@ -1,12 +1,12 @@
-import type { VNodeChild } from '../types'
+import type { VNode, VNodeChild } from '../types'
 
 export interface ContextProviderProps<T> {
   value?: T
-  children?: VNodeChild
+  children?: [VNodeChild]
 }
 
 export interface RenderXContext<T> {
   id: symbol
   defaultValue: T
-  Provider: (props: ContextProviderProps<T>) => VNodeChild
+  Provider: (props: ContextProviderProps<T>) => VNode
 }

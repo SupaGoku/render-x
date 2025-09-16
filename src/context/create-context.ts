@@ -1,10 +1,10 @@
-import type { VNodeChild } from '../types'
+import type { VNode } from '../types'
 import { beginContext, endContext } from './registry'
 import type { ContextProviderProps, RenderXContext } from './types'
 
 export const CONTEXT_MARKER = Symbol('render-x-context')
 
-type ProviderComponent<T> = (props: ContextProviderProps<T>) => VNodeChild
+type ProviderComponent<T> = (props: ContextProviderProps<T>) => VNode
 
 export const createContext = <T>(defaultValue: T): RenderXContext<T> => {
   const context: RenderXContext<T> = {
@@ -13,14 +13,17 @@ export const createContext = <T>(defaultValue: T): RenderXContext<T> => {
     Provider: undefined as unknown as ProviderComponent<T>,
   }
 
-  const Provider: ProviderComponent<T> = ({ children }) => {
+  const Provider: ProviderComponent<T> = (props) => {
+    const children = props?.children ?? []
+
     if (Array.isArray(children)) {
       if (children.length !== 1) {
         throw new Error('Context.Provider expects exactly one child element.')
       }
-      return (children[0] ?? null) as VNodeChild
+      return (children[0] ?? null) as VNode
     }
-    return (children ?? null) as VNodeChild
+
+    return children as VNode
   }
 
   Object.defineProperty(Provider, CONTEXT_MARKER, {

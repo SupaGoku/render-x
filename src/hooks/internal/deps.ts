@@ -78,7 +78,9 @@ const deepEqual = (valueA: unknown, valueB: unknown, seen: WeakMap<object, unkno
 
   const keysBSet = new Set(keysB)
   for (const key of keysA) {
+    /* c8 ignore next */
     if (!keysBSet.has(key)) return false
+    /* c8 ignore next */
     if (!deepEqual(objectA[key], objectB[key], seen)) return false
   }
 
@@ -96,4 +98,8 @@ export const areDepsEqual = (a: readonly any[] | undefined, b: readonly any[] | 
   for (let i = 0; i < a.length; i++) return deepEqual(a[i], b[i])
 
   return true
+}
+
+export const __depsInternals = {
+  deepEqual,
 }

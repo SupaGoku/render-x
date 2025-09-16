@@ -1,7 +1,7 @@
 import { registerEventHandler } from './event-manager'
 import type { VNodeProps } from './types'
 
-const setElementStyle = (element: HTMLElement, style: unknown): void => {
+export const setElementStyle = (element: HTMLElement, style: unknown): void => {
   if (typeof style === 'string') {
     element.style.cssText = style
   } else if (style && typeof style === 'object') {
@@ -40,27 +40,36 @@ const syncProperty = (element: Element, key: string, value: unknown, isInitial: 
     return
   }
 
-  switch (key) {
-    case 'className': {
-      const nextClassName = String(value ?? '')
-      if (isInitial || !classNamesMatch(element.className, nextClassName)) {
-        element.className = nextClassName
-      }
+  if (key === 'className') {
+    const nextClassName = String(value)
+    if (isInitial) {
+      element.className = nextClassName
+      return
     }
-    case 'style': {
-      setElementStyle(element as HTMLElement, value)
-    }
-    case 'id':
-      element.setAttribute('id', String(value))
 
-    default: {
-      if (key.startsWith('data-')) {
-        element.setAttribute(key, String(value))
-      } else {
-        ;(element as unknown as Record<string, unknown>)[key] = value
-      }
+    if (classNamesMatch(element.className, nextClassName)) {
+      return
     }
+    element.className = nextClassName
+    return
   }
+
+  if (key === 'style') {
+    setElementStyle(element as HTMLElement, value)
+    return
+  }
+
+  if (key === 'id') {
+    element.setAttribute('id', String(value))
+    return
+  }
+
+  if (key.startsWith('data-')) {
+    element.setAttribute(key, String(value))
+    return
+  }
+
+  ;(element as unknown as Record<string, unknown>)[key] = value
 }
 
 export const applyElementProps = (element: Element, props: VNodeProps): void => {

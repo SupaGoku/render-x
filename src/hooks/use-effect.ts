@@ -1,12 +1,8 @@
+import type { EffectHook } from '../types'
 import { getHookContext } from './internal/context'
 import { areDepsEqual } from './internal/deps'
-import { isEffectHook } from './internal/effect-utils'
-import type { EffectHook, HookData } from '../types'
 
-export const useEffect = (
-  effect: () => void | (() => void),
-  deps?: readonly any[]
-): void => {
+export const useEffect = (effect: () => void | (() => void), deps?: readonly any[]): void => {
   const context = getHookContext()
   const hookIndex = context.index++
   const existingHook = context.hooks[hookIndex]

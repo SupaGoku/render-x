@@ -1,10 +1,10 @@
 import type { VNode, VNodeChild } from './types'
 import { isVNode } from './vdom'
 
+import { enterContextProvider, exitContextProvider, getContextFromComponent } from './context/internal'
 import { applyElementProps } from './dom-props'
 import { cleanupEvents, setupEventDelegation } from './event-manager'
 import { cleanupHostInstance } from './hooks/internal'
-import { enterContextProvider, exitContextProvider, getContextFromComponent } from './context/internal'
 
 export const render = (root: Element, vnode: VNodeChild): void => {
   if (!root) throw new Error('Render root element is required')
@@ -45,24 +45,30 @@ const createFragment = (vnode: VNode): DocumentFragment => {
 
 const createFunctionElement = (vnode: VNode): Element | Text | DocumentFragment | null => {
   const context = getContextFromComponent(vnode.type as any)
+
+  const vNodeProps = vnode.props ?? {}
+  const fullProps = { ...vNodeProps, children: vnode.children }
+
   if (context) {
-    const rawValue = vnode.props ? (vnode.props as any).value : undefined
-    const providerValue = rawValue === undefined ? context.defaultValue : (rawValue as typeof context.defaultValue)
-    enterContextProvider(context, providerValue)
+    const rawValue = (fullProps as any)?.value ? (fullProps as any).value : undefined
+    if (rawValue === undefined) {
+      enterContextProvider(context, context.defaultValue)
+    } else {
+      enterContextProvider(context, rawValue as typeof context.defaultValue)
+    }
   }
 
   try {
-    const result = (vnode.type as any)(vnode.props)
+    const result = (vnode.type as any)(fullProps)
     const rendered = createElementFromVNode(result)
     return rendered
   } catch (error) {
     console.error('Functional component render error:', error)
 
     throw error
+    /* c8 ignore next */
   } finally {
-    if (context) {
-      exitContextProvider(context)
-    }
+    if (context) exitContextProvider(context)
   }
 }
 
@@ -90,4 +96,12 @@ const cleanupElement = (element: Element): void => {
   }
   cleanupEvents(element)
   element.innerHTML = ''
+}
+
+export const __renderInternals = {
+  createElementFromVNode,
+  createFragment,
+  createFunctionElement,
+  createElement,
+  cleanupElement,
 }

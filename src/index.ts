@@ -11,21 +11,14 @@ export { createPortal, Portal } from './portal'
 export { render } from './render'
 
 // Hooks
-export {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type HookContext,
-  type HookData,
-} from './hooks'
+export { useCallback, useContext, useEffect, useMemo, useRef, useState } from './hooks'
 
 // Context API
-export { createContext, type RenderXContext, type ContextProviderProps } from './context'
+export { createContext } from './context/create-context'
 
 // Types
+export { type ContextProviderProps, type RenderXContext } from './context/types'
+export type { PortalProps } from './portal'
 export {
   type DelegatedEventType,
   type EventContext,

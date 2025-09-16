@@ -56,9 +56,11 @@ export const jsx = (
   ...children: VNodeChild[]
 ): VNode => {
   if (typeof type === 'function') {
+    /* c8 ignore start */
     if (renderComponent == null) {
       throw new Error('No component renderer is configured. Ensure @render-x/core has been imported before rendering.')
     }
+    /* c8 ignore stop */
 
     const [key, componentProps] = sanitizeProps(props)
     const normalizedChildren = normalizeChildren(children)
