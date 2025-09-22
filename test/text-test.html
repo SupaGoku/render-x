@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Text Node Test</title>
+</head>
+<body>
+  <div id="test">Hello</div>
+  <script>
+    const div = document.getElementById('test')
+    const textNode = div.firstChild
+
+    console.log('Text node:', textNode)
+    console.log('Node type:', textNode.nodeType) // 3 = TEXT_NODE
+    console.log('Text content:', textNode.textContent)
+    console.log('Parent:', textNode.parentNode)
+    console.log('Has nodeValue:', 'nodeValue' in textNode)
+
+    // Can we update it?
+    textNode.textContent = 'World'
+    console.log('Updated content:', div.textContent)
+
+    // Can we replace it?
+    const newText = document.createTextNode('Replaced!')
+    textNode.parentNode.replaceChild(newText, textNode)
+    console.log('Replaced content:', div.textContent)
+
+    // Check prototype chain
+    console.log('textNode instanceof Text:', textNode instanceof Text)
+    console.log('textNode instanceof Node:', textNode instanceof Node)
+    console.log('Prototype chain:',
+      Object.getPrototypeOf(textNode).constructor.name,
+      Object.getPrototypeOf(Object.getPrototypeOf(textNode)).constructor.name,
+      Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(textNode))).constructor.name
+    )
+  </script>
+</body>
+</html>
